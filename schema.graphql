@@ -1,0 +1,144 @@
+type SimpleGaugeVoter_AdminChanged {
+  id: ID!
+  previousAdmin: String!
+  newAdmin: String!
+}
+
+type SimpleGaugeVoter_BeaconUpgraded {
+  id: ID!
+  beacon: String!
+}
+
+type SimpleGaugeVoter_GaugeActivated {
+  id: ID!
+  gauge: String!
+}
+
+type SimpleGaugeVoter_GaugeCreated {
+  id: ID!
+  gauge: String!
+  creator: String!
+  metadataURI: String!
+}
+
+type SimpleGaugeVoter_GaugeDeactivated {
+  id: ID!
+  gauge: String!
+}
+
+type SimpleGaugeVoter_GaugeMetadataUpdated {
+  id: ID!
+  gauge: String!
+  metadataURI: String!
+}
+
+type SimpleGaugeVoter_Initialized {
+  id: ID!
+  version: BigInt!
+}
+
+type SimpleGaugeVoter_Paused {
+  id: ID!
+  account: String!
+}
+
+type SimpleGaugeVoter_Reset {
+  id: ID!
+  voter: String!
+  gauge: String!
+  epoch: BigInt!
+  tokenId: BigInt!
+  votingPowerRemovedFromGauge: BigInt!
+  totalVotingPowerInGauge: BigInt!
+  totalVotingPowerInContract: BigInt!
+  timestamp: BigInt!
+}
+
+type SimpleGaugeVoter_Unpaused {
+  id: ID!
+  account: String!
+}
+
+type SimpleGaugeVoter_Upgraded {
+  id: ID!
+  implementation: String!
+}
+
+type SimpleGaugeVoter_Voted {
+  id: ID!
+  voter: String!
+  gauge: String!
+  epoch: BigInt!
+  tokenId: BigInt!
+  votingPowerCastForGauge: BigInt!
+  totalVotingPowerInGauge: BigInt!
+  totalVotingPowerInContract: BigInt!
+  timestamp: BigInt!
+}
+
+type VotingEscrowIncreasing_AdminChanged {
+  id: ID!
+  previousAdmin: String!
+  newAdmin: String!
+}
+
+type VotingEscrowIncreasing_BeaconUpgraded {
+  id: ID!
+  beacon: String!
+}
+
+type VotingEscrowIncreasing_Deposit {
+  id: ID!
+  depositor: String!
+  tokenId: BigInt!
+  startTs: BigInt!
+  value: BigInt!
+  newTotalLocked: BigInt!
+}
+
+type VotingEscrowIncreasing_Initialized {
+  id: ID!
+  version: BigInt!
+}
+
+type VotingEscrowIncreasing_MinDepositSet {
+  id: ID!
+  minDeposit: BigInt!
+}
+
+type VotingEscrowIncreasing_Paused {
+  id: ID!
+  account: String!
+}
+
+type VotingEscrowIncreasing_Sweep {
+  id: ID!
+  to: String!
+  amount: BigInt!
+}
+
+type VotingEscrowIncreasing_SweepNFT {
+  id: ID!
+  to: String!
+  tokenId: BigInt!
+}
+
+type VotingEscrowIncreasing_Unpaused {
+  id: ID!
+  account: String!
+}
+
+type VotingEscrowIncreasing_Upgraded {
+  id: ID!
+  implementation: String!
+}
+
+type VotingEscrowIncreasing_Withdraw {
+  id: ID!
+  depositor: String!
+  tokenId: BigInt!
+  value: BigInt!
+  ts: BigInt!
+  newTotalLocked: BigInt!
+}
+
