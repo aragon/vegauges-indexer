@@ -22,7 +22,7 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "envio": "2.13.0",
+    "envio": "2.21.0",
     "sqlite3": "^5.1.7"
   },
   "optionalDependencies": {
