@@ -35,7 +35,7 @@ networks:
           - 0xA55eD5808aeCDF23AE3782C1443185f5D2363ce7 # Puffer
       - name: ExitQueue
         address:
-          - 0xD9C2d314E29F1940d2a65A691881F0950fE4A455
+          - 0xD9C2d314E29F1940d2a65A691881F0950fE4A455 # Puffer
   - id: 34443 # Mode
     start_block: 0
     contracts:

@@ -3,6 +3,7 @@ import { setContractData } from "./helpers";
 import { getDayId, getDayStartTimestamp } from "./utils/timeHelpers";
 import { Context } from "vm";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
+import { getGeneratedByChainId } from "../generated/src/ConfigYAML.gen";
 
 ExitQueue.Initialized.handler(async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
@@ -25,7 +26,15 @@ ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
 });
 
 ExitQueue.ExitQueued.handler(async ({ event, context }: any) => {
-  const votingEscrowAddress = votingEscrow(event.srcAddress);
+  const votingEscrowAddress = votingEscrowFromExitQueue(
+    event.chainId,
+    event.srcAddress
+  );
+  if (!votingEscrowAddress) {
+    throw new Error(
+      `Voting escrow address not found for exit queue ${event.srcAddress} on chain ${event.chainId}`
+    );
+  }
   const contractId = buildContractId(event.chainId, votingEscrowAddress);
 
   const entity: ExitQueued = {
@@ -91,22 +100,19 @@ const updateExitQueueDailyMetrics = async (
   }
 };
 
-const votingEscrow = (exitQueue: string): String =>
-  getVotingEscrowAddressFromExitQueue[exitQueue as keyof typeof getVotingEscrowAddressFromExitQueue];
+const votingEscrowFromExitQueue = (
+  chainId: number,
+  exitQueue: string,
+): String | undefined => {
+  const config = getGeneratedByChainId(chainId);
 
-const getVotingEscrowAddressFromExitQueue = {
-  "0x915e50A7C53e05F72122bC883309a812A90bA163":
-    "0xff8AB822b8A853b01F9a9E9465321d6Fe77c9D2F",
-  "0x1c9B7bD4b3684A0c34Bd9A9b3f7F2dFC8fD81826":
-    "0x9c2eFe2a1FBfb601125Bb07a3D5bC6EC91F91e01",
-  "0x03477487df4de0B5EF852e7C21A74f9C71f0e910":
-    "0x632Ec6569aA76aF2c6AF64e2F048ab8CA16fa5ab",
-  "0xa6361bAAF26c7841Dd7Ac69945Fbb9e5362Ab2C7":
-    "0xaf5d3878E364b004A964c66e79E7c04F8c110b1C",
-  "0xD9C2d314E29F1940d2a65A691881F0950fE4A455":
-    "0xA55eD5808aeCDF23AE3782C1443185f5D2363ce7",
-  "0xecE1FdAA2b0b97B3B7e43af01Aa150F0E2DA2869":
-    "0xe9786294973de1CD376a0A6189d7aE250D490C16",
-  "0x4BDf0A33c21ad12EB49e68cA26FB59a77f42F2b0":
-    "0x76Ba3E61f1E736E42e063B815f3D7c9cCb0716c2",
-};
+  const exitContracts = config.contracts["ExitQueue"];
+  const exitAddresses = exitContracts.addresses;
+  const exitQueueIndex = exitAddresses.indexOf(exitQueue);
+  if (exitQueueIndex !== -1) {
+    const votingContracts = config.contracts["VotingEscrowIncreasing"];
+    const votingAddresses = votingContracts.addresses;
+    return votingAddresses[exitQueueIndex];
+  }
+  return undefined;
+}
