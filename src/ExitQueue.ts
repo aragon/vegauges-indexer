@@ -5,7 +5,7 @@ import { Context } from "vm";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
 
 ExitQueue.Initialized.handler(async ({ event, context }: any) => {
-  setContractData(event.chainId, event.srcAddress, context);
+  await setContractData(event.chainId, event.srcAddress, context);
 });
 
 ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
@@ -14,7 +14,7 @@ ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
 
   await setContractData(event.chainId, event.params.implementation, context);
 
-  context.ProxyContractUpdates.set({
+  await context.ProxyContractUpdates.set({
     id: contractId,
     chainId: event.chainId,
     address: event.srcAddress,
@@ -36,9 +36,9 @@ ExitQueue.ExitQueued.handler(async ({ event, context }: any) => {
     exitDate: event.params.exitDate,
   };
 
-  context.ExitQueued.set(entity);
+  await context.ExitQueued.set(entity);
 
-  updateExitQueueDailyMetrics(
+  await updateExitQueueDailyMetrics(
     event.chainId,
     votingEscrowAddress,
     event.params.tokenId,
@@ -78,7 +78,7 @@ const updateExitQueueDailyMetrics = async (
       amountOfExits: BigInt(1),
       totalTokens: lock.value,
     };
-    context.ExitQueueDailyMetrics.set(newExitQueueData);
+    await context.ExitQueueDailyMetrics.set(newExitQueueData);
   } else {
     const updatedExitQueueData = {
       id: aggregatedDataID,
@@ -87,7 +87,7 @@ const updateExitQueueDailyMetrics = async (
       amountOfExits: exitQueueData.amountOfExits + BigInt(1),
       totalTokens: exitQueueData.totalTokens + lock.value,
     };
-    context.ExitQueueDailyMetrics.set(updatedExitQueueData);
+    await context.ExitQueueDailyMetrics.set(updatedExitQueueData);
   }
 };
 

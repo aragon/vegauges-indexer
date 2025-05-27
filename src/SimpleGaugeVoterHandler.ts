@@ -22,7 +22,7 @@ import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
 SimpleGaugeVoter.Initialized.handler(async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
 
-  context.GaugePlugin.set({
+  await context.GaugePlugin.set({
     id: buildContractId(event.chainId, event.srcAddress),
     pluginContract_id: buildContractId(event.chainId, event.srcAddress),
   });
@@ -34,7 +34,7 @@ SimpleGaugeVoter.Upgraded.handler(async ({ event, context }: any) => {
 
   await setContractData(event.chainId, event.params.implementation, context);
 
-  context.ProxyContractUpdates.set({
+  await context.ProxyContractUpdates.set({
     id: contractId,
     chainId: event.chainId,
     address: event.srcAddress,
@@ -51,7 +51,7 @@ SimpleGaugeVoter.GaugeActivated.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.GaugeActivated.set(entity);
+  await context.GaugeActivated.set(entity);
   await activateGauge(event.chainId, event.srcAddress, event.params.gauge, context);
 });
 
@@ -80,7 +80,7 @@ SimpleGaugeVoter.GaugeCreated.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.GaugeCreated.set(entity);
+  await context.GaugeCreated.set(entity);
 
   await setGauge(
     event.chainId,
@@ -103,7 +103,7 @@ SimpleGaugeVoter.GaugeDeactivated.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.GaugeDeactivated.set(entity);
+  await context.GaugeDeactivated.set(entity);
   await deactivateGauge(event.chainId, event.srcAddress, event.params.gauge, context);
 });
 
@@ -120,7 +120,7 @@ SimpleGaugeVoter.GaugeMetadataUpdated.handler(async ({ event, context }: any) =>
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.GaugeMetadataUpdated.set(entity);
+  await context.GaugeMetadataUpdated.set(entity);
   await updateGaugeMetadata(
     event.chainId,
     event.srcAddress,
@@ -147,7 +147,7 @@ SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.VoteReset.set(entity);
+  await context.VoteReset.set(entity);
   await updateVotingMetrics(
     event.chainId,
     event.srcAddress,
@@ -177,7 +177,7 @@ SimpleGaugeVoter.Voted.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.Vote.set(entity);
+  await context.Vote.set(entity);
 
   await addUniqueVoter(event.chainId, event.srcAddress, event.params.voter, context);
   await updateVotingMetrics(

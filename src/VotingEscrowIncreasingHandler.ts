@@ -49,7 +49,7 @@ VotingEscrowIncreasing.Deposit.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.Deposit.set(entity);
+  await context.Deposit.set(entity);
 
   await addUniqueStaker(
     event.chainId,
@@ -99,7 +99,7 @@ VotingEscrowIncreasing.MinDepositSet.handler(async ({ event, context }: any) => 
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.MinDepositSet.set(entity);
+  await context.MinDepositSet.set(entity);
 });
 
 VotingEscrowIncreasing.Withdraw.handler(async ({ event, context }: any) => {
@@ -113,7 +113,7 @@ VotingEscrowIncreasing.Withdraw.handler(async ({ event, context }: any) => {
     contract_id: buildContractId(event.chainId, event.srcAddress),
   };
 
-  context.Withdraw.set(entity);
+  await context.Withdraw.set(entity);
 
   await setLockActiveStatusToInactive(
     event.chainId,
@@ -179,5 +179,5 @@ async function setLockActiveStatusToInactive(
     contract_id: deposit.contract_id,
   };
 
-  context.Deposit.set(entity);
+  await context.Deposit.set(entity);
 }
