@@ -14,7 +14,7 @@ import {
   updateEscrowLocksDailyMetrics,
   updateEscrowLocksMetrics,
 } from "./helpers";
-import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
+import { buildContractId, buildProxyContractId, buildDepositId } from "./utils/idBuilder";
 
 VotingEscrowIncreasing.Initialized.handler(async ({ event, context }: any) => {
   setContractData(event.chainId, event.srcAddress, context);
@@ -38,7 +38,7 @@ VotingEscrowIncreasing.Upgraded.handler(async ({ event, context }: any) => {
 
 VotingEscrowIncreasing.Deposit.handler(async ({ event, context }: any) => {
   const entity: Deposit = {
-    id: `${event.params.tokenId}-${event.srcAddress}-${event.chainId}`,
+    id: buildDepositId(event.params.tokenId, event.srcAddress, event.chainId),
     depositor: event.params.depositor,
     tokenId: event.params.tokenId,
     startTs: event.params.startTs,
