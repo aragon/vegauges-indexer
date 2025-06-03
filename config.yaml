@@ -33,9 +33,11 @@ networks:
       - name: VotingEscrowIncreasing
         address:
           - 0xA55eD5808aeCDF23AE3782C1443185f5D2363ce7 # Puffer
+          - 0xD666B56EE7786Cc918fDdcEade542d013de0E4F1 # YieldNest
       - name: ExitQueue
         address:
           - 0xD9C2d314E29F1940d2a65A691881F0950fE4A455 # Puffer
+          - 0x7C842057f3A6cD6E9331DD8731A80C158Dd18C07 # YieldNest
   - id: 34443 # Mode
     start_block: 0
     contracts:
