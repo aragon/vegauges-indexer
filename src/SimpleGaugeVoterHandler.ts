@@ -18,6 +18,7 @@ import {
 } from "./helpers";
 import { fetchIpfs } from "./utils/ipfs";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
+import { getVotingEscrowIncreasingAddresses } from "./utils/contractAddresses";
 
 SimpleGaugeVoter.Initialized.handler(async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
@@ -134,9 +135,15 @@ SimpleGaugeVoter.GaugeMetadataUpdated.handler(async ({ event, context }: any) =>
 });
 
 SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
+  let voter = event.params.voter;
+
+  if (getVotingEscrowIncreasingAddresses(event.chainId).includes(voter)) {
+    voter = event.transaction.from;
+  }
+
   const entity: VoteReset = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
-    voter: event.params.voter,
+    voter,
     gauge: event.params.gauge,
     epoch: event.params.epoch,
     tokenId: event.params.tokenId,
@@ -152,7 +159,7 @@ SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
     event.chainId,
     event.srcAddress,
     event.params.gauge,
-    event.params.voter,
+    voter,
     event.params.epoch,
     event.params.votingPowerRemovedFromGauge,
     event.params.totalVotingPowerInGauge,
@@ -179,7 +186,12 @@ SimpleGaugeVoter.Voted.handler(async ({ event, context }: any) => {
 
   await context.Vote.set(entity);
 
-  await addUniqueVoter(event.chainId, event.srcAddress, event.params.voter, context);
+  await addUniqueVoter(
+    event.chainId,
+    event.srcAddress,
+    event.params.voter,
+    context,
+  );
   await updateVotingMetrics(
     event.chainId,
     event.srcAddress,

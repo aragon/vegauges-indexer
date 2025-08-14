@@ -17,6 +17,9 @@ contracts:
       - event: GaugeDeactivated(address indexed gauge)
       - event: GaugeMetadataUpdated(address indexed gauge, string metadataURI)
       - event: Reset(address indexed voter, address indexed gauge, uint256 indexed epoch, uint256 tokenId, uint256 votingPowerRemovedFromGauge, uint256 totalVotingPowerInGauge, uint256 totalVotingPowerInContract, uint256 timestamp)
+        field_selection:
+          transaction_fields:
+            - from
       - event: Voted(address indexed voter, address indexed gauge, uint256 indexed epoch, uint256 tokenId, uint256 votingPowerCastForGauge, uint256 totalVotingPowerInGauge, uint256 totalVotingPowerInContract, uint256 timestamp)
       - event: Upgraded(address indexed implementation)
       - event: Initialized(uint8 version)
