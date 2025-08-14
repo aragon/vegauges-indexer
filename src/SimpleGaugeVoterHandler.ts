@@ -18,7 +18,7 @@ import {
 } from "./helpers";
 import { fetchIpfs } from "./utils/ipfs";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
-import { getVotingEscrowIncreasingAddresses } from "./utils/contractAddresses";
+import { isVotingEscrowIncreasing } from "./utils/contractAddresses";
 
 SimpleGaugeVoter.Initialized.handler(async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
@@ -137,7 +137,7 @@ SimpleGaugeVoter.GaugeMetadataUpdated.handler(async ({ event, context }: any) =>
 SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
   let voter = event.params.voter;
 
-  if (getVotingEscrowIncreasingAddresses(event.chainId).includes(voter)) {
+  if (isVotingEscrowIncreasing(event.chainId, voter)) {
     voter = event.transaction.from;
   }
 

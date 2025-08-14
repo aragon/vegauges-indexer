@@ -15,5 +15,14 @@ export function getVotingEscrowIncreasingAddresses(chainId: number): string[] {
     return [];
   }
 
-  return votingEscrowContract.addresses;
+  return votingEscrowContract.addresses.map((address) => address.toLowerCase());
+}
+
+export function isVotingEscrowIncreasing(
+  chainId: number,
+  contract: string,
+): boolean {
+  const addresses = getVotingEscrowIncreasingAddresses(chainId);
+
+  return addresses.includes(contract.toLowerCase());
 }
