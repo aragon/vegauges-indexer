@@ -1,10 +1,7 @@
 import { handlerContext } from "generated";
 import { Cache } from "./cache";
 
-async function fetchFromEndpoint<T>(
-  endpoint: string,
-  cid: string,
-): Promise<T> {
+async function fetchFromEndpoint<T>(endpoint: string, cid: string): Promise<T> {
   const response = await fetch(`${endpoint}/${cid}`);
   if (response.ok) {
     const metadata: any = await response.json();
@@ -19,7 +16,7 @@ async function fetchFromEndpoint<T>(
 
 async function tryFetchIpfsFile<T>(
   cid: string,
-  context: handlerContext
+  context: handlerContext,
 ): Promise<T> {
   const endpoints = [
     // we cycle through these endpoints to try ensure data availability
@@ -30,7 +27,7 @@ async function tryFetchIpfsFile<T>(
   const MAX_RETRIES = 3;
   const RETRY_DELAY = 500; // in milliseconds
 
-  for (const endpoint of endpoints.filter(n => n)) {
+  for (const endpoint of endpoints.filter((n) => n)) {
     let retries = 0;
     while (retries < MAX_RETRIES) {
       try {
@@ -39,7 +36,9 @@ async function tryFetchIpfsFile<T>(
         context.log.error(`Error fetching from endpoint ${endpoint}: ${error}`);
         retries++;
         if (retries < MAX_RETRIES) {
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * retries));
+          await new Promise((resolve) =>
+            setTimeout(resolve, RETRY_DELAY * retries),
+          );
         }
       }
     }
@@ -50,7 +49,7 @@ async function tryFetchIpfsFile<T>(
 
 export async function fetchIpfs<T>(
   cid: string,
-  context: handlerContext
+  context: handlerContext,
 ): Promise<T> {
   const cache = await Cache.init();
   const _cid = cid.replace("ipfs://", "");

@@ -10,8 +10,15 @@ ExitQueue.Initialized.handler(async ({ event, context }: any) => {
 });
 
 ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
-  const contractId = buildProxyContractId(event.chainId, event.srcAddress, event.params.implementation);
-  const implementationId = buildContractId(event.chainId, event.params.implementation);
+  const contractId = buildProxyContractId(
+    event.chainId,
+    event.srcAddress,
+    event.params.implementation,
+  );
+  const implementationId = buildContractId(
+    event.chainId,
+    event.params.implementation,
+  );
 
   await setContractData(event.chainId, event.params.implementation, context);
 
@@ -28,11 +35,11 @@ ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
 ExitQueue.ExitQueued.handler(async ({ event, context }: any) => {
   const votingEscrowAddress = votingEscrowFromExitQueue(
     event.chainId,
-    event.srcAddress
+    event.srcAddress,
   );
   if (!votingEscrowAddress) {
     throw new Error(
-      `Voting escrow address not found for exit queue ${event.srcAddress} on chain ${event.chainId}`
+      `Voting escrow address not found for exit queue ${event.srcAddress} on chain ${event.chainId}`,
     );
   }
   const contractId = buildContractId(event.chainId, votingEscrowAddress);
@@ -115,4 +122,4 @@ const votingEscrowFromExitQueue = (
     return votingAddresses[exitQueueIndex];
   }
   return undefined;
-}
+};

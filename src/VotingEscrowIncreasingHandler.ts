@@ -14,15 +14,26 @@ import {
   updateEscrowLocksDailyMetrics,
   updateEscrowLocksMetrics,
 } from "./helpers";
-import { buildContractId, buildProxyContractId, buildDepositId } from "./utils/idBuilder";
+import {
+  buildContractId,
+  buildProxyContractId,
+  buildDepositId,
+} from "./utils/idBuilder";
 
 VotingEscrowIncreasing.Initialized.handler(async ({ event, context }: any) => {
   setContractData(event.chainId, event.srcAddress, context);
 });
 
 VotingEscrowIncreasing.Upgraded.handler(async ({ event, context }: any) => {
-  const contractId = buildProxyContractId(event.chainId, event.srcAddress, event.params.implementation);
-  const implementationId = buildContractId(event.chainId, event.params.implementation);
+  const contractId = buildProxyContractId(
+    event.chainId,
+    event.srcAddress,
+    event.params.implementation,
+  );
+  const implementationId = buildContractId(
+    event.chainId,
+    event.params.implementation,
+  );
 
   await setContractData(event.chainId, event.params.implementation, context);
 
@@ -92,15 +103,17 @@ VotingEscrowIncreasing.Deposit.handler(async ({ event, context }: any) => {
   );
 });
 
-VotingEscrowIncreasing.MinDepositSet.handler(async ({ event, context }: any) => {
-  const entity: MinDepositSet = {
-    id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
-    minDeposit: event.params.minDeposit,
-    contract_id: buildContractId(event.chainId, event.srcAddress),
-  };
+VotingEscrowIncreasing.MinDepositSet.handler(
+  async ({ event, context }: any) => {
+    const entity: MinDepositSet = {
+      id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
+      minDeposit: event.params.minDeposit,
+      contract_id: buildContractId(event.chainId, event.srcAddress),
+    };
 
-  await context.MinDepositSet.set(entity);
-});
+    await context.MinDepositSet.set(entity);
+  },
+);
 
 VotingEscrowIncreasing.Withdraw.handler(async ({ event, context }: any) => {
   const entity: Withdraw = {

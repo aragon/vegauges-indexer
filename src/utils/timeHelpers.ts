@@ -1,4 +1,3 @@
-
 export function getDayId(timestamp: number) {
   return Math.floor(timestamp / 86400); // rounded
 }
