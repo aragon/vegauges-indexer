@@ -227,7 +227,7 @@ type CurrentGaugeVoterVotes {
 }
 
 type EpochGaugeVoterVotes {
-    id: ID! # timestamp-voter-gauge-plugin-chainId
+    id: ID! # epoch-voter-gauge-plugin-chainId
     epoch: BigInt!
     voter: String!
     gauge: Gauge!

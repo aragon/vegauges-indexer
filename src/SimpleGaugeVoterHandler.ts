@@ -13,9 +13,11 @@ import {
   activateGauge,
   deactivateGauge,
   setContractData,
+} from "./helpers";
+import {
   updateVotingMetrics,
   addUniqueVoter,
-} from "./helpers";
+} from "./metrics/SimpleGaugeVoterMetrics";
 import { fetchIpfs } from "./utils/ipfs";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
 import { isVotingEscrowIncreasing } from "./utils/contractAddresses";
@@ -30,8 +32,15 @@ SimpleGaugeVoter.Initialized.handler(async ({ event, context }: any) => {
 });
 
 SimpleGaugeVoter.Upgraded.handler(async ({ event, context }: any) => {
-  const contractId = buildProxyContractId(event.chainId, event.srcAddress, event.params.implementation);
-  const implementationId = buildContractId(event.chainId, event.params.implementation);
+  const contractId = buildProxyContractId(
+    event.chainId,
+    event.srcAddress,
+    event.params.implementation,
+  );
+  const implementationId = buildContractId(
+    event.chainId,
+    event.params.implementation,
+  );
 
   await setContractData(event.chainId, event.params.implementation, context);
 
@@ -53,7 +62,12 @@ SimpleGaugeVoter.GaugeActivated.handler(async ({ event, context }: any) => {
   };
 
   await context.GaugeActivated.set(entity);
-  await activateGauge(event.chainId, event.srcAddress, event.params.gauge, context);
+  await activateGauge(
+    event.chainId,
+    event.srcAddress,
+    event.params.gauge,
+    context,
+  );
 });
 
 type GaugeMetadata = {
@@ -68,7 +82,10 @@ type GaugeMetadata = {
 };
 
 SimpleGaugeVoter.GaugeCreated.handler(async ({ event, context }: any) => {
-  const metadata = await fetchIpfs<GaugeMetadata>(event.params.metadataURI, context);
+  const metadata = await fetchIpfs<GaugeMetadata>(
+    event.params.metadataURI,
+    context,
+  );
 
   const entity: GaugeCreated = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
@@ -105,37 +122,47 @@ SimpleGaugeVoter.GaugeDeactivated.handler(async ({ event, context }: any) => {
   };
 
   await context.GaugeDeactivated.set(entity);
-  await deactivateGauge(event.chainId, event.srcAddress, event.params.gauge, context);
-});
-
-SimpleGaugeVoter.GaugeMetadataUpdated.handler(async ({ event, context }: any) => {
-  const metadata = await fetchIpfs<GaugeMetadata>(event.params.metadataURI, context);
-
-  const entity: GaugeMetadataUpdated = {
-    id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
-    gauge: event.params.gauge,
-    metadataURI: event.params.metadataURI,
-    metadata: JSON.stringify(metadata),
-    name: metadata.name,
-    logo: metadata.logo,
-    contract_id: buildContractId(event.chainId, event.srcAddress),
-  };
-
-  await context.GaugeMetadataUpdated.set(entity);
-  await updateGaugeMetadata(
+  await deactivateGauge(
     event.chainId,
     event.srcAddress,
     event.params.gauge,
-    event.params.metadataURI,
-    JSON.stringify(metadata),
-    metadata.name,
-    metadata.logo,
     context,
   );
 });
 
+SimpleGaugeVoter.GaugeMetadataUpdated.handler(
+  async ({ event, context }: any) => {
+    const metadata = await fetchIpfs<GaugeMetadata>(
+      event.params.metadataURI,
+      context,
+    );
+
+    const entity: GaugeMetadataUpdated = {
+      id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
+      gauge: event.params.gauge,
+      metadataURI: event.params.metadataURI,
+      metadata: JSON.stringify(metadata),
+      name: metadata.name,
+      logo: metadata.logo,
+      contract_id: buildContractId(event.chainId, event.srcAddress),
+    };
+
+    await context.GaugeMetadataUpdated.set(entity);
+    await updateGaugeMetadata(
+      event.chainId,
+      event.srcAddress,
+      event.params.gauge,
+      event.params.metadataURI,
+      JSON.stringify(metadata),
+      metadata.name,
+      metadata.logo,
+      context,
+    );
+  },
+);
+
 SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
-  let voter = event.params.voter;
+  let voter = event.params.voter; // Lowercase???
 
   if (isVotingEscrowIncreasing(event.chainId, voter)) {
     voter = event.transaction.from;
