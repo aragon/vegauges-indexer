@@ -18,11 +18,11 @@
     "chai": "4.3.10",
     "mocha": "10.2.0",
     "ts-mocha": "^10.1.0",
-    "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "ts-node": "10.9.2",
+    "typescript": "5.9.2"
   },
   "dependencies": {
-    "envio": "2.27.3",
+    "envio": "2.29.1",
     "sqlite3": "^5.1.7"
   },
   "optionalDependencies": {

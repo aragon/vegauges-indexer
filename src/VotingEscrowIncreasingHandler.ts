@@ -16,8 +16,8 @@ import {
 } from "./helpers";
 import {
   buildContractId,
-  buildProxyContractId,
   buildDepositId,
+  buildProxyContractId,
 } from "./utils/idBuilder";
 
 VotingEscrowIncreasing.Initialized.handler(async ({ event, context }: any) => {

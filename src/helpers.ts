@@ -4,7 +4,6 @@ import {
   buildGaugeId,
   buildGaugePluginId,
   buildStakerId,
-  buildVoterId,
   aggregatedDataId,
   buildDepositId,
 } from "./utils/idBuilder";
@@ -337,38 +336,24 @@ export const updateEscrowLocksMetrics = async (
   const stakerKey = buildStakerId(srcAddress, staker, chainId);
   let stakerRecord = await context.StakerRegistry.get(stakerKey); // Assume StakerRegistry exists
 
-  const amountActiveLocks = await stakerRecord.tokenIds.reduce(
-    async (acc: number, tokenId: BigInt) => {
-      const lock = await context.Deposit.get(
-        buildDepositId(tokenId, srcAddress, chainId),
-      );
-      if (lock.active) {
-        acc += 1;
-      }
-    },
-    0,
-  );
-
   const isNewHolder =
     isLocking && stakerRecord.tokenIds.length === 1 ? true : false;
 
   let activeHolder = 0;
 
-  // If isNewHolder --> +1
-  // If Depositing
-  // --> If amountActiveLocks === 1 --> +1
-  // --> Else --> +0
-  // If Withdrawing
-  // --> If amountActiveLocks > 0 --> 0
-  // --> Esle --> -1
-  if (isNewHolder) activeHolder += 1;
+  if (isNewHolder) activeHolder = 1;
   else {
+    const locks = await Promise.all(
+      stakerRecord.tokenIds.map((tokenId: BigInt) =>
+        context.Deposit.get(buildDepositId(tokenId, srcAddress, chainId)),
+      ),
+    );
+    const amountActiveLocks = locks.filter((lock) => lock.active).length;
+
     if (isLocking) {
       if (amountActiveLocks === 1) activeHolder = 1;
-      else activeHolder = 0;
     } else {
-      if (amountActiveLocks > 0) activeHolder = 0;
-      else activeHolder = -1;
+      if (amountActiveLocks === 0) activeHolder = -1;
     }
   }
 

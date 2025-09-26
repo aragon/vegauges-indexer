@@ -162,7 +162,7 @@ SimpleGaugeVoter.GaugeMetadataUpdated.handler(
 );
 
 SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
-  let voter = event.params.voter; // Lowercase???
+  let voter = event.params.voter;
 
   if (isVotingEscrowIncreasing(event.chainId, voter)) {
     voter = event.transaction.from;
