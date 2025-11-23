@@ -276,18 +276,30 @@ type DelegateVotesChanged {
 }
 
 # Delegation Aggregations
+type Account {
+    id: ID! # address-contract-chainId
+    address: String!
+    contract: Contract!
+    # All delegations made BY this account (when acting as delegator)
+    delegations: [Delegation!]! @derivedFrom(field: "delegator")
+    # All delegations TO this account (when acting as delegate)
+    receivedDelegations: [Delegation!]! @derivedFrom(field: "delegate")
+}
+
 type Delegation {
     id: ID! # delegator-contract-chainId
-    delegator: String!
-    currentDelegate: String!
+    delegator: Account!
+    delegate: Account!
+    delegateVotingPower: DelegateVotingPower
     contract: Contract!
     lastUpdated: BigInt!
 }
 
 type DelegateVotingPower {
     id: ID! # delegate-contract-chainId
-    delegate: String!
+    delegate: Account!
     votingPower: BigInt!
+    delegators: [Delegation!]! @derivedFrom(field: "delegateVotingPower")
     contract: Contract!
     lastUpdated: BigInt!
 }
