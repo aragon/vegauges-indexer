@@ -253,3 +253,53 @@ type ExitQueueDailyMetrics {
     amountOfExits: BigInt!
     totalTokens: BigInt!
 }
+
+# Delegation Events
+type DelegateChanged {
+    id: ID! # chainId-blockNumber-logIndex
+    delegator: String!
+    fromDelegate: String!
+    toDelegate: String!
+    blockNumber: BigInt!
+    timestamp: BigInt!
+    contract: Contract! @index
+}
+
+type DelegateVotesChanged {
+    id: ID! # chainId-blockNumber-logIndex
+    delegate: String!
+    previousBalance: BigInt!
+    newBalance: BigInt!
+    blockNumber: BigInt!
+    timestamp: BigInt!
+    contract: Contract! @index
+}
+
+# Delegation Aggregations
+type Account {
+    id: ID! # address-contract-chainId
+    address: String!
+    contract: Contract!
+    # All delegations made BY this account (when acting as delegator)
+    delegations: [Delegation!]! @derivedFrom(field: "delegator")
+    # All delegations TO this account (when acting as delegate)
+    receivedDelegations: [Delegation!]! @derivedFrom(field: "delegate")
+}
+
+type Delegation {
+    id: ID! # delegator-contract-chainId
+    delegator: Account!
+    delegate: Account!
+    delegateVotingPower: DelegateVotingPower
+    contract: Contract!
+    lastUpdated: BigInt!
+}
+
+type DelegateVotingPower {
+    id: ID! # delegate-contract-chainId
+    delegate: Account!
+    votingPower: BigInt!
+    delegators: [Delegation!]! @derivedFrom(field: "delegateVotingPower")
+    contract: Contract!
+    lastUpdated: BigInt!
+}

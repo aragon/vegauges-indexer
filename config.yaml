@@ -29,6 +29,11 @@ contracts:
       - event: ExitQueued(uint256 indexed tokenId, address indexed holder, uint256 exitDate)
       - event: Upgraded(address indexed implementation)
       - event: Initialized(uint8 version)
+  - name: EscrowIVotesAdapter
+    handler: src/EventHandlers.ts
+    events:
+      - event: DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate)
+      - event: DelegateVotesChanged(address indexed delegate, uint256 previousBalance, uint256 newBalance)
 networks:
   - id: 1 # Mainnet
     start_block: 0
