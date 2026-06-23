@@ -5,7 +5,7 @@
     "clean": "tsc --clean",
     "build": "tsc --build",
     "watch": "tsc --watch",
-    "mocha": "ts-mocha test/**/*.ts",
+    "mocha": "ts-mocha test/**/*.ts --timeout 20000",
     "codegen": "envio codegen",
     "dev": "envio dev",
     "test": "pnpm mocha",
@@ -13,16 +13,16 @@
   },
   "devDependencies": {
     "@types/chai": "^4.3.20",
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.8.8",
-    "chai": "4.3.10",
-    "mocha": "10.2.0",
+    "@types/mocha": "10.0.10",
+    "@types/node": "20.19.43",
+    "chai": "4.5.0",
+    "mocha": "10.8.2",
     "ts-mocha": "^10.1.0",
-    "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
   },
   "dependencies": {
-    "envio": "2.27.3",
+    "envio": "2.32.12",
     "sqlite3": "^5.1.7"
   },
   "optionalDependencies": {
