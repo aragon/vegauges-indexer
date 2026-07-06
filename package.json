@@ -16,7 +16,7 @@
     "@types/mocha": "10.0.10",
     "@types/node": "20.19.43",
     "chai": "4.5.0",
-    "mocha": "10.8.2",
+    "mocha": "11.7.6",
     "ts-mocha": "^10.1.0",
     "ts-node": "10.9.2",
     "typescript": "5.9.3"
@@ -27,5 +27,11 @@
   },
   "optionalDependencies": {
     "generated": "link:generated"
+  },
+  "pnpm": {
+    "overrides": {
+      "js-yaml@<4.2.0": ">=4.2.0",
+      "serialize-javascript@<7.0.5": ">=7.0.5"
+    }
   }
 }
