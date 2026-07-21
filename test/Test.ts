@@ -1,5 +1,5 @@
 import assert from "assert";
-import { TestHelpers } from "generated";
+import { TestHelpers } from "envio";
 const { MockDb, SimpleGaugeVoter } = TestHelpers;
 
 import voteEvents from "./fixtures/Votes.json";

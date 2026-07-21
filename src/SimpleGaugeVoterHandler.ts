@@ -1,12 +1,4 @@
-import {
-  SimpleGaugeVoter,
-  GaugeActivated,
-  GaugeCreated,
-  GaugeDeactivated,
-  GaugeMetadataUpdated,
-  VoteReset,
-  Vote,
-} from "generated";
+import { indexer, SimpleGaugeVoter, GaugeActivated, GaugeCreated, GaugeDeactivated, GaugeMetadataUpdated, VoteReset, Vote } from "envio";
 import {
   setGauge,
   updateGaugeMetadata,
@@ -22,16 +14,21 @@ import { fetchIpfs } from "./utils/ipfs";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
 import { isVotingEscrowIncreasing } from "./utils/contractAddresses";
 
-SimpleGaugeVoter.Initialized.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "Initialized" },
+  async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
 
   await context.GaugePlugin.set({
     id: buildContractId(event.chainId, event.srcAddress),
     pluginContract_id: buildContractId(event.chainId, event.srcAddress),
   });
-});
+}
+);
 
-SimpleGaugeVoter.Upgraded.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "Upgraded" },
+  async ({ event, context }: any) => {
   const contractId = buildProxyContractId(
     event.chainId,
     event.srcAddress,
@@ -52,9 +49,12 @@ SimpleGaugeVoter.Upgraded.handler(async ({ event, context }: any) => {
     blockNumber: event.block.number,
     timestamp: event.block.timestamp,
   });
-});
+}
+);
 
-SimpleGaugeVoter.GaugeActivated.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "GaugeActivated" },
+  async ({ event, context }: any) => {
   const entity: GaugeActivated = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
     gauge: event.params.gauge,
@@ -68,7 +68,8 @@ SimpleGaugeVoter.GaugeActivated.handler(async ({ event, context }: any) => {
     event.params.gauge,
     context,
   );
-});
+}
+);
 
 type GaugeMetadata = {
   name: string;
@@ -81,7 +82,9 @@ type GaugeMetadata = {
   }[];
 };
 
-SimpleGaugeVoter.GaugeCreated.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "GaugeCreated" },
+  async ({ event, context }: any) => {
   const metadata = await fetchIpfs<GaugeMetadata>(
     event.params.metadataURI,
     context,
@@ -112,9 +115,12 @@ SimpleGaugeVoter.GaugeCreated.handler(async ({ event, context }: any) => {
     true,
     context,
   );
-});
+}
+);
 
-SimpleGaugeVoter.GaugeDeactivated.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "GaugeDeactivated" },
+  async ({ event, context }: any) => {
   const entity: GaugeDeactivated = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
     gauge: event.params.gauge,
@@ -128,9 +134,11 @@ SimpleGaugeVoter.GaugeDeactivated.handler(async ({ event, context }: any) => {
     event.params.gauge,
     context,
   );
-});
+}
+);
 
-SimpleGaugeVoter.GaugeMetadataUpdated.handler(
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "GaugeMetadataUpdated" },
   async ({ event, context }: any) => {
     const metadata = await fetchIpfs<GaugeMetadata>(
       event.params.metadataURI,
@@ -158,10 +166,12 @@ SimpleGaugeVoter.GaugeMetadataUpdated.handler(
       metadata.logo,
       context,
     );
-  },
+  }
 );
 
-SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "Reset" },
+  async ({ event, context }: any) => {
   let voter = event.params.voter;
 
   if (isVotingEscrowIncreasing(event.chainId, voter)) {
@@ -195,9 +205,12 @@ SimpleGaugeVoter.Reset.handler(async ({ event, context }: any) => {
     false,
     context,
   );
-});
+}
+);
 
-SimpleGaugeVoter.Voted.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "SimpleGaugeVoter", event: "Voted" },
+  async ({ event, context }: any) => {
   const entity: Vote = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
     voter: event.params.voter,
@@ -232,4 +245,5 @@ SimpleGaugeVoter.Voted.handler(async ({ event, context }: any) => {
     true,
     context,
   );
-});
+}
+);

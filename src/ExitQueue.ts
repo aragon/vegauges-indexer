@@ -1,15 +1,20 @@
-import { ExitQueue, ExitQueued } from "generated";
+import { indexer, ExitQueue, ExitQueued } from "envio";
 import { setContractData } from "./helpers";
 import { getDayId, getDayStartTimestamp } from "./utils/timeHelpers";
 import { Context } from "vm";
 import { buildContractId, buildProxyContractId } from "./utils/idBuilder";
 import { getGeneratedByChainId } from "../generated/src/ConfigYAML.gen";
 
-ExitQueue.Initialized.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "ExitQueue", event: "Initialized" },
+  async ({ event, context }: any) => {
   await setContractData(event.chainId, event.srcAddress, context);
-});
+}
+);
 
-ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "ExitQueue", event: "Upgraded" },
+  async ({ event, context }: any) => {
   const contractId = buildProxyContractId(
     event.chainId,
     event.srcAddress,
@@ -30,9 +35,12 @@ ExitQueue.Upgraded.handler(async ({ event, context }: any) => {
     blockNumber: event.block.number,
     timestamp: event.block.timestamp,
   });
-});
+}
+);
 
-ExitQueue.ExitQueued.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "ExitQueue", event: "ExitQueued" },
+  async ({ event, context }: any) => {
   const votingEscrowAddress = votingEscrowFromExitQueue(
     event.chainId,
     event.srcAddress,
@@ -61,7 +69,8 @@ ExitQueue.ExitQueued.handler(async ({ event, context }: any) => {
     event.params.exitDate,
     context,
   );
-});
+}
+);
 
 const updateExitQueueDailyMetrics = async (
   chainId: Number,

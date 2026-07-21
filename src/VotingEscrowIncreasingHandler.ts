@@ -1,10 +1,5 @@
 import { Context } from "vm";
-import {
-  VotingEscrowIncreasing,
-  Deposit,
-  MinDepositSet,
-  Withdraw,
-} from "generated";
+import { indexer, VotingEscrowIncreasing, Deposit, MinDepositSet, Withdraw } from "envio";
 import {
   updateWithdrawalDailyMetrics,
   updateDepositDailyMetrics,
@@ -20,11 +15,16 @@ import {
   buildProxyContractId,
 } from "./utils/idBuilder";
 
-VotingEscrowIncreasing.Initialized.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "VotingEscrowIncreasing", event: "Initialized" },
+  async ({ event, context }: any) => {
   setContractData(event.chainId, event.srcAddress, context);
-});
+}
+);
 
-VotingEscrowIncreasing.Upgraded.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "VotingEscrowIncreasing", event: "Upgraded" },
+  async ({ event, context }: any) => {
   const contractId = buildProxyContractId(
     event.chainId,
     event.srcAddress,
@@ -45,9 +45,12 @@ VotingEscrowIncreasing.Upgraded.handler(async ({ event, context }: any) => {
     blockNumber: event.block.number,
     timestamp: event.block.timestamp,
   });
-});
+}
+);
 
-VotingEscrowIncreasing.Deposit.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "VotingEscrowIncreasing", event: "Deposit" },
+  async ({ event, context }: any) => {
   const entity: Deposit = {
     id: buildDepositId(event.params.tokenId, event.srcAddress, event.chainId),
     depositor: event.params.depositor,
@@ -101,9 +104,11 @@ VotingEscrowIncreasing.Deposit.handler(async ({ event, context }: any) => {
     true,
     context,
   );
-});
+}
+);
 
-VotingEscrowIncreasing.MinDepositSet.handler(
+indexer.onEvent(
+  { contract: "VotingEscrowIncreasing", event: "MinDepositSet" },
   async ({ event, context }: any) => {
     const entity: MinDepositSet = {
       id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
@@ -112,10 +117,12 @@ VotingEscrowIncreasing.MinDepositSet.handler(
     };
 
     await context.MinDepositSet.set(entity);
-  },
+  }
 );
 
-VotingEscrowIncreasing.Withdraw.handler(async ({ event, context }: any) => {
+indexer.onEvent(
+  { contract: "VotingEscrowIncreasing", event: "Withdraw" },
+  async ({ event, context }: any) => {
   const entity: Withdraw = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
     depositor: event.params.depositor,
@@ -168,7 +175,8 @@ VotingEscrowIncreasing.Withdraw.handler(async ({ event, context }: any) => {
     false,
     context,
   );
-});
+}
+);
 
 // Function to set Lock active status as false
 async function setLockActiveStatusToInactive(

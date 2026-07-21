@@ -29,7 +29,7 @@ contracts:
       - event: ExitQueued(uint256 indexed tokenId, address indexed holder, uint256 exitDate)
       - event: Upgraded(address indexed implementation)
       - event: Initialized(uint8 version)
-networks:
+chains:
   - id: 1 # Mainnet
     start_block: 0
     contracts:

@@ -1,4 +1,4 @@
-import { handlerContext } from "generated";
+import { handlerContext } from "envio";
 import { Cache } from "./cache";
 
 async function fetchFromEndpoint<T>(endpoint: string, cid: string): Promise<T> {
